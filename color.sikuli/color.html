@@ -1,0 +1,154 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>color.sikuli</h2> <a href="color.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="kw">from</span> java.awt <span class="kw">import</span> Robot
+<span class="kw">from</span> java.awt <span class="kw">import</span> Color
+<span class="kw">from</span> java.awt <span class="kw">import</span> Rectangle
+<span class="kw">from</span> time <span class="kw">import</span> time
+
+<span class="kw">def</span> getListColor(SCREEN): <span class="cmt">#pass a Region and get pixel (r,g,b)    </span>
+    i = Robot().createScreenCapture(Rectangle(SCREEN.getX(),
+                SCREEN.getY(), SCREEN.getW(), SCREEN.getH()))
+
+    c = Color(i.getRGB(<span class="dig">0</span>, <span class="dig">0</span>))
+    <span class="kw">return</span> c.getRed(), c.getGreen(), c.getBlue()
+
+
+<span class="kw">def</span> setdict(cur_x, cur_y):
+    <span class="kw">global</span> d, multi
+    key = getListColor( Region(cur_x, cur_y, <span class="dig">10</span>, <span class="dig">10</span>) )
+
+    <span class="kw">if</span> key <span class="kw">in</span> d:
+        d.get(key).append((cur_x, cur_y))
+        multi=True
+    <span class="kw">else</span>:
+        d[key] = [(cur_x, cur_y)]
+
+
+<span class="kw">def</span> solve(num, cur_offset, cur_start_x, cur_start_y):
+    <span class="kw">global</span> d, multi
+    d, multi = {}, False
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(num):
+        cur_x = cur_start_x + i*cur_offset
+        <span class="kw">for</span> j <span class="kw">in</span> range(num):
+            cur_y = cur_start_y + j*cur_offset
+            setdict(cur_x, cur_y) <span class="cmt"># record {(r,g,b):(x,y)}</span>
+
+            <span class="kw">if</span> multi == True: <span class="cmt"># more than 1 square has same color</span>
+                <span class="kw">for</span> value <span class="kw">in</span> d.values():
+                    <span class="kw">if</span> len(value) == <span class="dig">1</span>: <span class="cmt">#return answer</span>
+                        <span class="kw">return</span> value[<span class="dig">0</span>]
+
+<span class="kw">def</span> play():
+    start_time = time()
+
+    <span class="cmt"># start point might be different (browser, screen....)
+</span>    start_x, start_y = <span class="dig">775</span>, <span class="dig">340</span>
+
+    level_length = [<span class="dig">2</span>, <span class="dig">3</span>, <span class="dig">4</span>, <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">6</span>, <span class="dig">6</span>, <span class="dig">7</span>, <span class="dig">7</span>, <span class="dig">7</span>, <span class="dig">8</span>, <span class="dig">8</span>, <span class="dig">8</span>, <span class="dig">8</span>, <span class="dig">8</span>, <span class="dig">8</span>]
+    cnt=<span class="dig">1</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">150</span>):
+        level_length.append(<span class="dig">9</span>)
+
+    <span class="kw">for</span> i <span class="kw">in</span> level_length:
+
+        end_time = time()
+        time_taken = end_time - start_time <span class="cmt"># time_taken is in seconds</span>
+        <span class="kw">if</span>(time_taken &gt;= <span class="dig">60</span>): <span class="cmt"># game end</span>
+            <span class="kw">break</span>
+
+        <span class="kw">print</span> <span class="str">"solving level"</span>, cnt
+        cnt += <span class="dig">1</span>
+        cur_offset = <span class="dig">500</span>/i
+        cur_start_x , cur_start_y = start_x + cur_offset/<span class="dig">2</span>, start_y + cur_offset/<span class="dig">2</span>
+
+        hover( Location(cur_start_x, cur_start_y) )
+
+        x, y = solve(i, cur_offset, cur_start_x, cur_start_y)
+        <span class="skw">click</span>( Location(x, y) )
+
+
+openApp(<span class="str">"firefox http://game.ioxapp.com/color"</span>)
+<span class="skw">wait</span>(<span class="dig">3</span>)
+Settings.MoveMouseDelay = <span class="dig">0.01</span>
+
+<span class="kw">if</span> exists(<img src="start.png" />):
+    <span class="skw">click</span>(<img src="start.png" />)
+    play()
+
+<span class="kw">else</span>:
+    <span class="kw">print</span> <span class="str">"timeout"</span>
+</pre>
+</body>
+</html>
