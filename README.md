@@ -24,7 +24,7 @@ Development Tools
 
 Demo
 --------
-Here's the [video](https://drive.google.com/file/d/0B_0lpa9AszN0b1ZSX1V1YllBWUU/view?usp=sharing)
+Here's the [video](https://drive.google.com/file/d/0B_0lpa9AszN0b1ZSX1V1YllBWUU/view?usp=sharing&resourcekey=0-iOG8zLFsbfg511EClTFxrA)
 
 On average, the program can solve about 100 levels per minute.  
 (Since the CPU have to handle the recording, it was slightly slower than its average speed in the video)
